@@ -1,7 +1,8 @@
-import pathlib
 from io import StringIO
 
-INPUT_FILE = pathlib.Path(pathlib.Path(__file__).parent.parent, "data/input_01.txt")
+from .inputs import DATA_DIR
+
+INPUT_FILE = DATA_DIR / "input_01.txt"
 
 
 def max_calorie_counter(calories: StringIO) -> int:
@@ -21,5 +22,4 @@ def max_calorie_counter(calories: StringIO) -> int:
 
 
 if __name__ == "__main__":
-    input = StringIO(INPUT_FILE.read_text())
-    print(max_calorie_counter(input))
+    print(max_calorie_counter(INPUT_FILE.open("r")))
