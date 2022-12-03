@@ -30,6 +30,7 @@ class Paper(Shape):
     def beats(move: Type[Shape]):
         return move is Rock
 
+
 class Scissors(Shape):
     shape_score = 3
     opponent_code = "C"
