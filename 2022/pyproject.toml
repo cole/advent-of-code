@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "advent-of-code-2022"
+description = ''
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Cole Maclean", email = "hi@colemaclean.dev" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/unknown/2022#readme"
+Issues = "https://github.com/unknown/2022/issues"
+Source = "https://github.com/unknown/2022"
+
+[tool.hatch.version]
+path = "2022/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "black",
+  "pytest",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest"
+format = "black aoc2022/"
+
+
+[[tool.hatch.envs.test.matrix]]
+python = ["311"]
