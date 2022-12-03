@@ -1,5 +1,5 @@
 from io import StringIO
-from aoc2022.day01 import calorie_counter
+from aoc2022.day01a import calorie_counter
 
 TEST_DATA = """1000
 2000
