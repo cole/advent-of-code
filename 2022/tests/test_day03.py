@@ -15,7 +15,6 @@ def test_sum_priorities():
     assert sum_priorities(input) == 157
 
 
-
 def test_sum_badge_priorities():
     input = StringIO(TEST_DATA)
     assert sum_badge_priorities(input) == 70
