@@ -1,6 +1,5 @@
 from io import StringIO
-from aoc2022.template import solve as solve_a
-from aoc2022.template import solve as solve_b
+from aoc2022.template import solve_a, solve_b
 
 
 TEST_DATA = """"""
