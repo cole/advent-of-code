@@ -1,5 +1,3 @@
-from io import StringIO
-
 from .inputs import DATA_DIR
 
 
