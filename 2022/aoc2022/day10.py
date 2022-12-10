@@ -9,7 +9,6 @@ INPUT_FILE = DATA_DIR / "input_10.txt"
 
 
 class VM:
-
     def __init__(self):
         self.register = 1
         self.cycle = 0
@@ -40,9 +39,9 @@ class VM:
             self.screen.append([])
             row = self.screen[row_index]
 
-        char = '.'
+        char = "."
         if self.register - 1 <= col_index <= self.register + 1:
-            char = '#'
+            char = "#"
 
         row.append(char)
 
@@ -79,7 +78,7 @@ def solve_a(input: StringIO) -> int:
         command = tuple(line.split())
         if command[0] == "noop":
             vm.enqueue(1, *command)
-        elif command[0] == 'addx':
+        elif command[0] == "addx":
             vm.enqueue(2, *command)
 
         while not vm.ready:
@@ -100,7 +99,7 @@ def solve_b(input: StringIO) -> int:
         command = tuple(line.split())
         if command[0] == "noop":
             vm.enqueue(1, *command)
-        elif command[0] == 'addx':
+        elif command[0] == "addx":
             vm.enqueue(2, *command)
 
         while not vm.ready:
@@ -108,7 +107,7 @@ def solve_b(input: StringIO) -> int:
             vm.draw()
             vm.finish_cycle()
 
-    return '\n'.join([''.join(row) for row in vm.screen])
+    return "\n".join(["".join(row) for row in vm.screen])
 
 
 if __name__ == "__main__":

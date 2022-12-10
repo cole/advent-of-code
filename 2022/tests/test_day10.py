@@ -165,7 +165,4 @@ def test_solve_a():
 
 def test_solve_b():
     input = StringIO(TEST_DATA)
-    print(solve_b(input))
-    print("\n\n")
-    print(TEST_OUTPUT)
     assert solve_b(input) == TEST_OUTPUT
