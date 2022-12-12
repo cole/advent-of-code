@@ -13,7 +13,14 @@ INPUT_FILE = DATA_DIR / "input_11.txt"
 
 
 class Monkey:
-    def __init__(self, starting_items: List[int], operation: str, test: str, true_index: int, false_index: int) -> None:
+    def __init__(
+        self,
+        starting_items: List[int],
+        operation: str,
+        test: str,
+        true_index: int,
+        false_index: int,
+    ) -> None:
         self.items = deque(starting_items)
         self.operation_func = self._parse_operation(operation)
         self.divisor = self._parse_test(test)
@@ -21,62 +28,72 @@ class Monkey:
         self.true_index = true_index
         self.false_index = false_index
         self.inspect_count = 0
-    
+
     @classmethod
     def parse_monkeys(cls, input: StringIO) -> List["Monkey"]:
         monkeys = []
-        starting_items, operation, test, true_index, false_index = None, None, None, None, None
+        starting_items, operation, test, true_index, false_index = (
+            None,
+            None,
+            None,
+            None,
+            None,
+        )
 
         for line in input:
             match line.strip().split():
-                case ['Monkey', index_str]:
-                    index = int(index_str.rstrip(':'))
+                case ["Monkey", index_str]:
+                    index = int(index_str.rstrip(":"))
                     if index > 0:
                         monkeys.append(
-                            cls(starting_items, operation, test, true_index, false_index)
+                            cls(
+                                starting_items, operation, test, true_index, false_index
+                            )
                         )
                     # Start a new monkey
-                    starting_items, operation, test, true_index, false_index = None, None, None, None, None
-                case ['Starting', 'items:', *items]:
-                    starting_items = [int(item.rstrip(',')) for item in items]
-                case ['Operation:', *operation]:
-                    operation = ' '.join(operation)
-                case ['Test:', *test_args]:
-                    test = ' '.join(test_args)
-                case ['If', 'true:', 'throw', 'to', 'monkey', true_monkey]:
+                    starting_items, operation, test, true_index, false_index = (
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                    )
+                case ["Starting", "items:", *items]:
+                    starting_items = [int(item.rstrip(",")) for item in items]
+                case ["Operation:", *operation]:
+                    operation = " ".join(operation)
+                case ["Test:", *test_args]:
+                    test = " ".join(test_args)
+                case ["If", "true:", "throw", "to", "monkey", true_monkey]:
                     true_index = int(true_monkey)
-                case ['If', 'false:', 'throw', 'to', 'monkey', true_monkey]:
+                case ["If", "false:", "throw", "to", "monkey", true_monkey]:
                     false_index = int(true_monkey)
                 case []:
                     pass
                 case _:
                     raise ValueError(f"Unable to parse line: '{line}'")
             # Add the last monkey
-        monkeys.append(
-            cls(starting_items, operation, test, true_index, false_index)
-        )
+        monkeys.append(cls(starting_items, operation, test, true_index, false_index))
 
         return monkeys
 
     def _parse_operation(self, operation: str):
         match operation.split():
-            case ['new', '=', 'old', '+', value_str]:
+            case ["new", "=", "old", "+", value_str]:
                 op = add
-            case ['new', '=', 'old', '*', value_str]:
+            case ["new", "=", "old", "*", value_str]:
                 op = mul
             case _:
                 raise ValueError(f"Unknown operator '{operation}'")
 
-        if value_str == 'old':
+        if value_str == "old":
             return lambda v: op(v, v)
-
 
         return functools.partial(op, int(value_str))
 
-
     def _parse_test(self, test: str):
         match test.split():
-            case ['divisible', 'by', value_str]:
+            case ["divisible", "by", value_str]:
                 return int(value_str)
             case _:
                 raise ValueError(f"Unknown test '{test}'")
@@ -101,42 +118,50 @@ class Monkey:
             self.inspect_count += 1
 
 
-
 def solve_a(input: StringIO) -> int:
     monkeys = Monkey.parse_monkeys(input)
-    
+
     rounds = 20
     for round_num in range(rounds):
         for monkey in monkeys:
-            for catch_index, thrown_item in monkey.take_turn(monkeys, divide_by_three=True):
+            for catch_index, thrown_item in monkey.take_turn(
+                monkeys, divide_by_three=True
+            ):
                 monkeys[catch_index].catch(thrown_item)
-        
+
         # print(f"Round: {round_num}")
         # for index, monkey in enumerate(monkeys):
         #     print(f"Monkey {index}: {list(monkey.items)}")
         # print("\n")
 
-    inspect_counts = [monkey.inspect_count for monkey in sorted(monkeys, key=lambda m: m.inspect_count, reverse=True)]
-
+    inspect_counts = [
+        monkey.inspect_count
+        for monkey in sorted(monkeys, key=lambda m: m.inspect_count, reverse=True)
+    ]
 
     return mul(*inspect_counts[:2])
 
 
 def solve_b(input: StringIO) -> int:
     monkeys = Monkey.parse_monkeys(input)
-    
+
     rounds = 10000
     for round_num in range(rounds):
         for monkey in monkeys:
-            for catch_index, thrown_item in monkey.take_turn(monkeys, divide_by_three=False):
+            for catch_index, thrown_item in monkey.take_turn(
+                monkeys, divide_by_three=False
+            ):
                 monkeys[catch_index].catch(thrown_item)
-        
+
         # print(f"Round: {round_num}")
         # for index, monkey in enumerate(monkeys):
         #     print(f"Monkey {index}: {list(monkey.items)}")
         # print("\n")
 
-    inspect_counts = [monkey.inspect_count for monkey in sorted(monkeys, key=lambda m: m.inspect_count, reverse=True)]
+    inspect_counts = [
+        monkey.inspect_count
+        for monkey in sorted(monkeys, key=lambda m: m.inspect_count, reverse=True)
+    ]
 
     return mul(*inspect_counts[:2])
 

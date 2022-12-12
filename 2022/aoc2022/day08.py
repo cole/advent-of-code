@@ -11,7 +11,7 @@ INPUT_FILE = DATA_DIR / "input_08.txt"
 def parse_grid(input: StringIO) -> Tuple[Tuple[int, ...]]:
     rows = []
     for line in input:
-        row = tuple([int(x) for x in line.rstrip('\n')])
+        row = tuple([int(x) for x in line.rstrip("\n")])
         rows.append(row)
 
     return tuple(rows)
