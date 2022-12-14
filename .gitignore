@@ -3,3 +3,4 @@ __pycache__
 # Inputs should not be distributed
 
 */data/*
+!*/data/.gitkeep
