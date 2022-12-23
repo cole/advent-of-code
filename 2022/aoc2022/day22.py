@@ -58,7 +58,6 @@ class Heading:
         self.value = (self.value - 90) % 360
 
 
-
 @dataclass
 class Grid:
     rows: list[list[str]]
@@ -136,7 +135,7 @@ class Grid:
                 else:
                     line.append(char)
 
-            print(''.join(line))
+            print("".join(line))
 
 
 def solve_a(input: StringIO) -> int:
@@ -156,7 +155,7 @@ def solve_a(input: StringIO) -> int:
 
     position = Point(y=0, x=grid.get_wrapped_right_point(0))
     heading = Heading(90)
-    
+
     for command in read_commands(commands):
         if isinstance(command, int):
             for _ in range(command):
@@ -181,13 +180,22 @@ def solve_a(input: StringIO) -> int:
                 if next_move_contents == " ":
                     match heading.value:
                         case 0:
-                            next_move = Point(y=grid.get_wrapped_top_point(position.x), x=position.x)
+                            next_move = Point(
+                                y=grid.get_wrapped_top_point(position.x), x=position.x
+                            )
                         case 90:
-                            next_move = Point(y=position.y, x=grid.get_wrapped_right_point(position.y))
+                            next_move = Point(
+                                y=position.y, x=grid.get_wrapped_right_point(position.y)
+                            )
                         case 180:
-                            next_move = Point(y=grid.get_wrapped_bottom_point(position.x), x=position.x)
+                            next_move = Point(
+                                y=grid.get_wrapped_bottom_point(position.x),
+                                x=position.x,
+                            )
                         case 270:
-                            next_move = Point(y=position.y, x=grid.get_wrapped_left_point(position.y))
+                            next_move = Point(
+                                y=position.y, x=grid.get_wrapped_left_point(position.y)
+                            )
                         case _:
                             raise ValueError(f"Unknown heading: {heading.value}")
 

@@ -13,6 +13,7 @@ class Number(NamedTuple):
     Cheat to allow us to find the index of the number in a list, despite
     the presence of duplicate values.
     """
+
     index: int
     value: int
 

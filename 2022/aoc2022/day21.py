@@ -12,6 +12,7 @@ INPUT_FILE = DATA_DIR / "input_21.txt"
 
 monkeys = {}
 
+
 @dataclass
 class Monkey:
     value: int | None
@@ -53,16 +54,27 @@ class Monkey:
         if self.value is not None:
             return self.value
 
-        return self.operation_func(self.left_monkey.resolve(), self.right_monkey.resolve())
+        return self.operation_func(
+            self.left_monkey.resolve(), self.right_monkey.resolve()
+        )
 
     def resolve_operations_chain(self):
         if self.value is not None:
             return [self.value]
 
-        return self.left_monkey.resolve_operations_chain() + [self.operation] + self.right_monkey.resolve_operations_chain()
+        return (
+            self.left_monkey.resolve_operations_chain()
+            + [self.operation]
+            + self.right_monkey.resolve_operations_chain()
+        )
 
 
-def converge_on(number_monkey: str, equality_monkey: str, start: int = 0, max: int = 100_000_000_000_000) -> int:
+def converge_on(
+    number_monkey: str,
+    equality_monkey: str,
+    start: int = 0,
+    max: int = 100_000_000_000_000,
+) -> int:
     target = monkeys[equality_monkey].right_monkey.resolve()
 
     step_size = ((max - start) // 1000) or 1
@@ -70,14 +82,17 @@ def converge_on(number_monkey: str, equality_monkey: str, start: int = 0, max: i
     for i in range(start, max, step_size):
         monkeys[number_monkey].value = i
         left_val = monkeys[equality_monkey].left_monkey.resolve()
-    
+
         if left_val == target:
             return i
-    
+
         if previous_left_val:
-            if previous_left_val < target < left_val or previous_left_val > target > left_val:
+            if (
+                previous_left_val < target < left_val
+                or previous_left_val > target > left_val
+            ):
                 return converge_on(number_monkey, equality_monkey, previous_step, i)
-        
+
         previous_step = i
         previous_left_val = left_val
 
@@ -86,9 +101,11 @@ def solve_a(input: StringIO, monkey: str) -> int:
     for line in input:
         match line.rstrip().split():
             case [monkey_name, value]:
-                monkeys[monkey_name.rstrip(':')] = Monkey(int(value), None, None, None)
+                monkeys[monkey_name.rstrip(":")] = Monkey(int(value), None, None, None)
             case [monkey_name, left_monkey_name, operation, right_monkey_name]:
-                monkeys[monkey_name.rstrip(':')] = Monkey(None, left_monkey_name, right_monkey_name, operation)
+                monkeys[monkey_name.rstrip(":")] = Monkey(
+                    None, left_monkey_name, right_monkey_name, operation
+                )
 
     return monkeys[monkey].resolve()
 
@@ -97,13 +114,17 @@ def solve_b(input: StringIO, equality_monkey: str, number_monkey: str) -> int:
     for line in input:
         match line.rstrip().split():
             case [monkey_name, value]:
-                monkeys[monkey_name.rstrip(':')] = Monkey(int(value), None, None, None)
+                monkeys[monkey_name.rstrip(":")] = Monkey(int(value), None, None, None)
             case [monkey_name, left_monkey_name, operation, right_monkey_name]:
                 if monkey_name == f"{equality_monkey}:":
-                    monkeys[monkey_name.rstrip(':')] = Monkey(None, left_monkey_name, right_monkey_name, "=")
+                    monkeys[monkey_name.rstrip(":")] = Monkey(
+                        None, left_monkey_name, right_monkey_name, "="
+                    )
                 else:
-                    monkeys[monkey_name.rstrip(':')] = Monkey(None, left_monkey_name, right_monkey_name, operation)
-    
+                    monkeys[monkey_name.rstrip(":")] = Monkey(
+                        None, left_monkey_name, right_monkey_name, operation
+                    )
+
     return converge_on(number_monkey, equality_monkey)
 
 
