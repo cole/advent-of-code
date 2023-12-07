@@ -28,7 +28,7 @@ class Hand:
     def type(self):
         chars = Counter(self.cards)
         if self.JOKER_CHAR:
-            jokers = chars.pop("J", 0)
+            jokers = chars.pop(self.JOKER_CHAR, 0)
         else:
             jokers = 0
         counts = tuple(sorted(chars.values(), reverse=True)) or (0,)
