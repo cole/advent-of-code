@@ -7,13 +7,13 @@ INPUT = open(sys.argv[1]).read().strip()
 
 
 class HandType(enum.IntEnum):
-    FIVE_OF_A_KIND = 7
-    FOUR_OF_A_KIND = 6
-    FULL_HOUSE = 5
-    THREE_OF_A_KIND = 4
-    TWO_PAIR = 3
-    ONE_PAIR = 2
-    HIGH_CARD = 1
+    HIGH_CARD = enum.auto()
+    ONE_PAIR = enum.auto()
+    TWO_PAIR = enum.auto()
+    THREE_OF_A_KIND = enum.auto()
+    FULL_HOUSE = enum.auto()
+    FOUR_OF_A_KIND = enum.auto()
+    FIVE_OF_A_KIND = enum.auto()
 
 
 @functools.total_ordering
