@@ -33,26 +33,21 @@ class Hand:
             jokers = 0
         counts = tuple(sorted(chars.values(), reverse=True)) or (0,)
 
-        if counts[0] + jokers == 5:
-            return HandType.FIVE_OF_A_KIND
-        elif counts[0] + jokers == 4:
-            return HandType.FOUR_OF_A_KIND
-        elif (counts[0] + jokers, counts[1]) == (3, 2) or (
-            counts[0],
-            counts[1] + jokers,
-        ) == (3, 2):
-            return HandType.FULL_HOUSE
-        elif counts[0] + jokers == 3:
-            return HandType.THREE_OF_A_KIND
-        elif (counts[0] + jokers, counts[1]) == (2, 2) or (
-            counts[0],
-            counts[1] + jokers,
-        ) == (2, 2):
-            return HandType.TWO_PAIR
-        elif counts[0] + jokers == 2:
-            return HandType.ONE_PAIR
-
-        return HandType.HIGH_CARD
+        match (counts[0] + jokers, *counts[1:]):
+            case (5, *_):
+                return HandType.FIVE_OF_A_KIND
+            case (4, *_):
+                return HandType.FOUR_OF_A_KIND
+            case (3, 2, *_):
+                return HandType.FULL_HOUSE
+            case (3, *_):
+                return HandType.THREE_OF_A_KIND
+            case (2, 2, *_):
+                return HandType.TWO_PAIR
+            case (2, *_):
+                return HandType.ONE_PAIR
+            case _:
+                return HandType.HIGH_CARD
 
     def __str__(self):
         return self.cards
