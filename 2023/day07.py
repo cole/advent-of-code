@@ -6,10 +6,6 @@ from collections import Counter
 INPUT = open(sys.argv[1]).read().strip()
 
 
-CARDS_1 = ("A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2")
-CARDS_2 = ("A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J")
-
-
 class HandType(enum.IntEnum):
     FIVE_OF_A_KIND = 7
     FOUR_OF_A_KIND = 6
@@ -21,73 +17,39 @@ class HandType(enum.IntEnum):
 
 
 @functools.total_ordering
-class HandOne:
+class Hand:
+    CARD_ORDER = ("A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2")
+    JOKER_CHAR = None
+
     def __init__(self, cards):
         self.cards = cards
 
     @property
     def type(self):
         chars = Counter(self.cards)
-        sorted_char_counts = tuple(sorted(chars.values()))
-        if sorted_char_counts == (5,):
+        if self.JOKER_CHAR:
+            jokers = chars.pop("J", 0)
+        else:
+            jokers = 0
+        counts = tuple(sorted(chars.values(), reverse=True)) or (0,)
+
+        if counts[0] + jokers == 5:
             return HandType.FIVE_OF_A_KIND
-        elif sorted_char_counts == (1, 4):
+        elif counts[0] + jokers == 4:
             return HandType.FOUR_OF_A_KIND
-        elif sorted_char_counts == (2, 3):
-            return HandType.FULL_HOUSE
-        elif max(sorted_char_counts) == 3:
-            return HandType.THREE_OF_A_KIND
-        elif sorted_char_counts == (1, 2, 2):
-            return HandType.TWO_PAIR
-        elif sorted_char_counts == (1, 1, 1, 2):
-            return HandType.ONE_PAIR
-
-        return HandType.HIGH_CARD
-
-    def __str__(self):
-        return self.cards
-
-    def __eq__(self, other):
-        return self.cards == other.cards
-
-    def __lt__(self, other):
-        if self.type.value == other.type.value:
-            for char_a, char_b in zip(self.cards, other.cards):
-                if char_a != char_b:
-                    return CARDS_1.index(char_a) > CARDS_1.index(char_b)
-
-            return self.cards > other.cards
-
-        return self.type.value < other.type.value
-
-
-@functools.total_ordering
-class HandTwo:
-    def __init__(self, cards):
-        self.cards = cards
-
-    @property
-    def type(self):
-        chars = Counter(self.cards)
-        jokers = chars.pop("J", 0)
-        sorted_char_counts = tuple(sorted(chars.values(), reverse=True)) or (0,)
-        if max(sorted_char_counts) + jokers == 5:
-            return HandType.FIVE_OF_A_KIND
-        elif max(sorted_char_counts) + jokers == 4:
-            return HandType.FOUR_OF_A_KIND
-        elif (sorted_char_counts[0] + jokers, sorted_char_counts[1]) == (3, 2) or (
-            sorted_char_counts[0],
-            sorted_char_counts[1] + jokers,
+        elif (counts[0] + jokers, counts[1]) == (3, 2) or (
+            counts[0],
+            counts[1] + jokers,
         ) == (3, 2):
             return HandType.FULL_HOUSE
-        elif max(sorted_char_counts) + jokers == 3:
+        elif counts[0] + jokers == 3:
             return HandType.THREE_OF_A_KIND
-        elif (sorted_char_counts[0] + jokers, sorted_char_counts[1]) == (2, 2) or (
-            sorted_char_counts[0],
-            sorted_char_counts[1] + jokers,
+        elif (counts[0] + jokers, counts[1]) == (2, 2) or (
+            counts[0],
+            counts[1] + jokers,
         ) == (2, 2):
             return HandType.TWO_PAIR
-        elif max(sorted_char_counts) + jokers == 2:
+        elif counts[0] + jokers == 2:
             return HandType.ONE_PAIR
 
         return HandType.HIGH_CARD
@@ -102,18 +64,23 @@ class HandTwo:
         if self.type.value == other.type.value:
             for char_a, char_b in zip(self.cards, other.cards):
                 if char_a != char_b:
-                    return CARDS_2.index(char_a) > CARDS_2.index(char_b)
+                    return self.CARD_ORDER.index(char_a) > self.CARD_ORDER.index(char_b)
 
-            return self.cards > other.cards
+            return False
 
         return self.type.value < other.type.value
+
+
+class HandWithJokers(Hand):
+    CARD_ORDER = ("A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J")
+    JOKER_CHAR = "J"
 
 
 def part1():
     hand_bids = []
     for line in INPUT.splitlines():
         hand_cards, bid = line.split()
-        hand_bids.append((HandOne(hand_cards), int(bid)))
+        hand_bids.append((Hand(hand_cards), int(bid)))
 
     hand_bids.sort(key=lambda i: i[0])
 
@@ -128,7 +95,7 @@ def part2():
     hand_bids = []
     for line in INPUT.splitlines():
         hand_cards, bid = line.split()
-        hand_bids.append((HandTwo(hand_cards), int(bid)))
+        hand_bids.append((HandWithJokers(hand_cards), int(bid)))
 
     hand_bids.sort(key=lambda i: i[0])
 
