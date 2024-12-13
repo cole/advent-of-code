@@ -1,5 +1,4 @@
 import enum
-from math import inf
 import sys
 from typing import NamedTuple
 
