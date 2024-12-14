@@ -84,7 +84,56 @@ def part1():
 
 
 def part2():
-    pass
+    bounds = Point(101, 103)
+    robots = []
+    for line in INPUT.split("\n"):
+        px, py, vx, vy = re.match(
+            r"p=([\d-]+),([\d-]+) v=([\d-]+),([\d-]+)", line
+        ).groups()
+        position = Point(int(px), int(py))
+        velocity = Point(int(vx), int(vy))
+
+        robot = Robot(position, velocity, bounds)
+        robots.append(robot)
+
+    for i in range(10000):
+        for robot in robots:
+            robot.move()
+
+        robot_positions = {}
+        for robot in robots:
+            robot_positions.setdefault(robot.position, 0)
+            robot_positions[robot.position] += 1
+
+        robot_keys = set(robot_positions.keys())
+        max_adjacent_count = 0
+        for point in robot_keys:
+            adjacent_count = 0
+            next_point = Point(point.x + 1, point.y - 1)
+            while next_point in robot_keys:
+                adjacent_count += 1
+                next_point = Point(next_point.x + 1, next_point.y - 1)
+                if next_point.x >= bounds.x or next_point.y < 0:
+                    break
+
+            max_adjacent_count = max(max_adjacent_count, adjacent_count)
+
+        if max_adjacent_count > 7:
+            print("-" * 100)
+            print(f"After {i} seconds:")
+
+            lines = []
+            for y_point in range(bounds.y):
+                line = ""
+                for x_point in range(bounds.x):
+                    count = robot_positions.get(Point(x_point, y_point), 0)
+
+                    line += str(count) if count else "."
+                lines.append(line)
+            print("\n".join(lines))
+            print("-" * 100)
+
+            break
 
 
 print(part1())
