@@ -3,16 +3,7 @@ import sys
 from typing import NamedTuple
 
 INPUT = open(sys.argv[1]).read().strip()
-SAMPLE = """RRRRIICCFF
-RRRRIICCCF
-VVRRRCCFFF
-VVRCCCJFFF
-VVVVCJJCFE
-VVIVCCJJEE
-VVIIICJJEE
-MIIIIIJJEE
-MIIISIJEEE
-MMMISSJEEE"""
+
 
 Point = NamedTuple("Point", [("x", int), ("y", int)])
 
@@ -103,8 +94,8 @@ class Plot:
         return len(self.points)
 
     @property
-    def perimeter(self):
-        sides = 0
+    def edge_points(self):
+        edge_points = set()
         for point in self.points:
             for direction in Direction:
                 adj_point = Point(
@@ -112,27 +103,72 @@ class Plot:
                     point.y + direction.value[1],
                 )
                 if adj_point not in self:
-                    sides += 1
+                    edge_points.add(point)
 
-        return sides
+        return edge_points
+
+    @property
+    def perimeter(self):
+        return len(self.edge_points)
 
     @property
     def sides(self):
-        edge_points = {}
-        for point in self.points:
+        count = 0
+        seen = {
+            Direction.UP: set(),
+            Direction.RIGHT: set(),
+            Direction.DOWN: set(),
+            Direction.LEFT: set(),
+        }
+
+        edge_points = self.edge_points
+
+        for point in edge_points:
             for direction in Direction:
                 adj_point = Point(
                     point.x + direction.value[0],
                     point.y + direction.value[1],
                 )
-                if adj_point not in self:
-                    edge_points[point].setdefault([])
-                    edge_points[point].append(adj_point)
+                if adj_point in self:
+                    continue
+                if adj_point in seen[direction]:
+                    continue
 
-        for point, adj_points in edge_points.items():
-            pass
+                seen[direction].add(adj_point)
 
-        return sides
+                next_low, next_high = adj_point, adj_point
+                if direction in (Direction.UP, Direction.DOWN):
+                    while (
+                        next_low not in self
+                        and Point(next_low.x, next_low.y - direction.value[1]) in self
+                    ):
+                        seen[direction].add(next_low)
+                        next_low = Point(next_low.x - 1, next_low.y)
+
+                    while (
+                        next_high not in self
+                        and Point(next_high.x, next_high.y - direction.value[1]) in self
+                    ):
+                        seen[direction].add(next_high)
+                        next_high = Point(next_high.x + 1, next_high.y)
+                else:
+                    while (
+                        next_low not in self
+                        and Point(next_low.x - direction.value[0], next_low.y) in self
+                    ):
+                        seen[direction].add(next_low)
+                        next_low = Point(next_low.x, next_low.y - 1)
+
+                    while (
+                        next_high not in self
+                        and Point(next_high.x - direction.value[0], next_high.y) in self
+                    ):
+                        seen[direction].add(next_high)
+                        next_high = Point(next_high.x, next_high.y + 1)
+
+                count += 1
+
+        return count
 
 
 def part1():
@@ -150,7 +186,7 @@ def part1():
 
 
 def part2():
-    grid = Grid(SAMPLE)
+    grid = Grid(INPUT)
     unvisited = set([point for point, _ in grid])
     total = 0
 
